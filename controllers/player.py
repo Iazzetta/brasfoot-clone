@@ -124,10 +124,16 @@ class PlayerController(IPlayerController):
             print(f"\nDEFESA DO GOLEIRO {goalkeeper.fullname()}\n")
             return False
 
-        print("\n-------------------------\n")
-        print(f"\nGOOOOOOOOOOOOOOOOL\n")
-        print(f"Gol do {me.fullname()}")
-        print("\n-------------------------\n")
+        print("""
+
+            ###########    ###########   ###########   ##           @@@@@
+            ###            ##       ##   ##       ##   ##          @@@@@@@@
+            ###  ######    ##       ##   ##       ##   ##          @@@@@@@@
+            ###     ###    ##       ##   ##       ##   ##            @@@@@
+            ###########    ###########   ###########   #########
+
+        """)
+        print(f"@ GOL DO {me.fullname()} !!")
         return True
 
     def get_player_to_pass(self, me: Player) -> str:

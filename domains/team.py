@@ -5,3 +5,4 @@ from domains.player import Player
 class Team:
     name: str
     players: list[Player] = field(default_factory=list)
+    score: int = 0

@@ -1,4 +1,4 @@
-# wave soccer
+# Wave Soccer
 
 Brasfoot clone
 
@@ -14,6 +14,7 @@ Brasfoot clone
 
 - 1) Define team who starts with the ball
 - 2) Choose a random Midfield to start with the ball
+
 - 3) Player pass ball order:
     - Goalkeeper -> Defensor || shoot to middle/Attacker
     - Defensor -> Midfield
@@ -24,7 +25,7 @@ Brasfoot clone
     - Midfield intercept pass Midfield
     - Defensor intercept shoot Attacker
     - Attacker intercept pass Defensor
-    - goal keeper defends shoot Attacker
+    - Goalkeeper defends shoot Attacker
 
 - 5) Addictional points of players (max points: 30):
     - pass_points (All)

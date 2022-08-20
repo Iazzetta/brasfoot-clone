@@ -8,7 +8,7 @@ from domains.team import Team
 
 GAME_RUNNING = True
 RESET_GAME_AFTER_GOAL = True
-TIME_BETWEEN_EACH_PLAY = 5
+TIME_BETWEEN_EACH_PLAY = .5
 
 def create_teams():
     team1:Team = Team(name = "Palmeiras")
@@ -49,7 +49,7 @@ if __name__ == '__main__':
     PC.team_with_ball = team1
     PC.ball_owner = PC.get_random_player_by_position(
         type_position = 'midfield',
-        team = team1
+        team = PC.team_with_ball
     )
 
     # initialize score
@@ -62,6 +62,7 @@ if __name__ == '__main__':
     # initialize game
     while GAME_RUNNING:
         time.sleep(TIME_BETWEEN_EACH_PLAY)
+
         if PC.ball_owner.type_position in ['goalkeeper', 'defensor', 'midfield' ]:
             adversary = PC.get_random_player_by_position(
                 type_position= PC.get_player_to_intercept(me = PC.ball_owner),

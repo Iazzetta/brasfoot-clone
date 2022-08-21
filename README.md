@@ -1,8 +1,8 @@
-# Wave Soccer
+# brasfoot clone
 
 Cloning brasfoot in Python with Hexagonal Architecture
 
-### Game Legend
+### game -> legend
 
 - Manager = tecnico (nós)
 - Defensor = zagueiro
@@ -10,7 +10,7 @@ Cloning brasfoot in Python with Hexagonal Architecture
 - Attacker = atacante
 - Goalkeeper = goleiro
 
-### Game Brain
+### game -> brain
 
 - 1) Define team who starts with the ball
 - 2) Choose a random Midfield to start with the ball

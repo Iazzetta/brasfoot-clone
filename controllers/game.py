@@ -3,7 +3,6 @@ import time
 from controllers.player import PlayerController
 from domains.game import Game
 from domains.hoster import Hoster
-from domains.player import Player
 from domains.team import Team
 from interfaces.game import IGameController
 
@@ -17,36 +16,7 @@ class GameController(IGameController):
     __round: int = 0
     __time_between_rounds: int = 5
 
-    def load(self):
-        team_a:Team = Team(name = "Palmeiras")
-        team_b:Team = Team(name = "São Paulo")
-        
-        team_a.players = [
-            Player(name = "Bruno", type_position = "goalkeeper"),
-            Player(name = "Caio", type_position = "defensor"),
-            Player(name = "Carlinhos", type_position = "defensor"),
-            Player(name = "Jorge", type_position = "midfield"),
-            Player(name = "Jairo", type_position = "midfield"),
-            Player(name = "Fagundes", type_position = "midfield"),
-            Player(name = "Neymar", type_position = "attacker"),
-            Player(name = "Madara", type_position = "attacker"),
-        ]
-
-        team_b.players = [
-            Player(name = "Rogerio", type_position = "goalkeeper"),
-            Player(name = "Zidani", type_position = "defensor"),
-            Player(name = "Chidori", type_position = "defensor"),
-            Player(name = "Jeferson", type_position = "midfield"),
-            Player(name = "Guilherme", type_position = "midfield"),
-            Player(name = "Kenio", type_position = "midfield"),
-            Player(name = "Messi", type_position = "attacker"),
-            Player(name = "Pelé", type_position = "attacker"),
-        ]
-        hoster = Hoster(
-            username = "pablo",
-            name = "Campeonato Legal",
-            email = "asdasjd@gmail.com",
-        )
+    def load(self, hoster: Hoster, team_a: Team, team_b: Team):
         self.game = Game(
             code = "123",
             status = "started",

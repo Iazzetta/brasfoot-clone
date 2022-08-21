@@ -9,7 +9,7 @@ from interfaces.game import IGameController
 
 
 class GameController(IGameController):
-    __player_controller: PlayerController = PlayerController()
+    __pcontroller: PlayerController = PlayerController()
     __time_between_each_play: int = 2
     __game_running: bool = True
     __minutes_per_rounds: int = 24 * 60 * 60
@@ -26,63 +26,97 @@ class GameController(IGameController):
         )
     
     def organize_players(self):
-        self.__player_controller.team_with_ball = self.game.team_a
-        self.__player_controller.ball_owner = self.__player_controller.get_random_player_by_position(
+        """ 
+            Define who team will start with the ball and ball owner
+            based on random midfield player.
+            Show the score and initial informations
+        """
+        self.__pcontroller.team_with_ball = self.game.team_a
+        self.__pcontroller.ball_owner = self.__pcontroller.get_random_player_by_position(
             type_position = 'midfield',
-            team = self.__player_controller.team_with_ball,
+            team = self.__pcontroller.team_with_ball,
         )
-        self.__player_controller.show_score(t1 = self.game.team_a, t2 = self.game.team_b)
+        self.__pcontroller.show_score(t1 = self.game.team_a, t2 = self.game.team_b)
         time.sleep(self.__time_between_each_play)
-        self.__player_controller.who_starts_the_game()
+        self.__pcontroller.who_starts_the_game()
 
     def start_game(self):
         started_at = datetime.now()
         while self.__game_running:
+
+            """
+                validation to check rounds (1 min each round)
+            """
             time.sleep(self.__time_between_each_play)
             actual_time = datetime.now()
             difference = actual_time - started_at
             check_minute = divmod(difference.days * self.__minutes_per_rounds + difference.seconds, 60) [0]
             if check_minute == 1 and self.__round < 1:
-                print("\n@ Round 1 finalizado\n")
+                print("\n@ 1º Tempo finalizado\n")
                 self.__round = 1
                 time.sleep(self.__time_between_rounds)
                 self.organize_players()
             elif check_minute == 2:
-                print("fim de jogo!")
-                self.__game_running = False            
+                print("\n@ 2º Tempo finalizado. FIM DE JOGO!\n")
+                self.__game_running = False
 
-            if self.__player_controller.ball_owner.type_position in ['goalkeeper', 'defensor', 'midfield' ]:
-                adversary = self.__player_controller.get_random_player_by_position(
-                    type_position= self.__player_controller.get_player_to_intercept(me = self.__player_controller.ball_owner),
-                    team = self.game.team_b if self.__player_controller.team_with_ball == self.game.team_a else self.game.team_a
+            """ 
+                control players who need to pass the ball to do a goal
+                controll players who will intercept pass
+            """
+            if self.__pcontroller.ball_owner.type_position in ['goalkeeper', 'defensor', 'midfield' ]:
+                # get adversary (interceptor)
+                adversary = self.__pcontroller.get_random_player_by_position(
+                    type_position= self.__pcontroller.get_player_to_intercept(
+                        me = self.__pcontroller.ball_owner
+                    ),
+                    team = self.game.team_b if self.__pcontroller.team_with_ball == self.game.team_a else self.game.team_a
                 )
-                friend = self.__player_controller.get_random_player_by_position(
-                    type_position= self.__player_controller.get_player_to_pass(me = self.__player_controller.ball_owner),
-                    team = self.__player_controller.team_with_ball,
-                    except_me = self.__player_controller.ball_owner
+                # get friend (ball owner want to pass)
+                friend = self.__pcontroller.get_random_player_by_position(
+                    type_position= self.__pcontroller.get_player_to_pass(
+                        me = self.__pcontroller.ball_owner
+                    ),
+                    team = self.__pcontroller.team_with_ball,
+                    except_me = self.__pcontroller.ball_owner
                 )
-                self.__player_controller.ball_owner = self.__player_controller.pass_the_ball( self.__player_controller.ball_owner, adversary, friend )
-                self.__player_controller.team_with_ball = self.__player_controller.get_player_team(
-                    player = self.__player_controller.ball_owner, 
+                # try pass the ball and set the new owner (adversary or friend)
+                self.__pcontroller.ball_owner = self.__pcontroller.pass_the_ball( 
+                    self.__pcontroller.ball_owner, adversary, friend 
+                )
+                # define team who have the ball now
+                self.__pcontroller.team_with_ball = self.__pcontroller.get_player_team(
+                    player = self.__pcontroller.ball_owner, 
                     t1 = self.game.team_a, 
                     t2 = self.game.team_b
                 )
-            elif self.__player_controller.ball_owner.type_position == 'attacker':
-                adversary_defensor = self.__player_controller.get_random_player_by_position(
-                    type_position = self.__player_controller.get_player_to_intercept(me = self.__player_controller.ball_owner),
-                    team = self.game.team_b if self.__player_controller.team_with_ball == self.game.team_a else self.game.team_a
+
+            elif self.__pcontroller.ball_owner.type_position == 'attacker':
+                """
+                    if player is attacker, must to dribble defensor and try to do a goal
+                """
+
+                # get defensor adversary (interceptor to be dribbled)
+                adversary_defensor = self.__pcontroller.get_random_player_by_position(
+                    type_position = self.__pcontroller.get_player_to_intercept(me = self.__pcontroller.ball_owner),
+                    team = self.game.team_b if self.__pcontroller.team_with_ball == self.game.team_a else self.game.team_a
                 )
-                adversary_goalkeeper = self.__player_controller.get_random_player_by_position(
+                # get goalkeeper
+                adversary_goalkeeper = self.__pcontroller.get_random_player_by_position(
                     type_position = 'goalkeeper',
-                    team = self.game.team_b if self.__player_controller.team_with_ball == self.game.team_a else self.game.team_a
+                    team = self.game.team_b if self.__pcontroller.team_with_ball == self.game.team_a else self.game.team_a
                 )
 
-                if self.__player_controller.dribble_defender(me = self.__player_controller.ball_owner, defensor = adversary_defensor):
+                # try dribble defensor
+                if self.__pcontroller.dribble_defender(me = self.__pcontroller.ball_owner, defensor = adversary_defensor):
                     time.sleep(self.__time_between_each_play)
-                    if self.__player_controller.shoot_the_ball(me = self.__player_controller.ball_owner, goalkeeper = adversary_goalkeeper):
+
+                    # try shoot to goal
+                    if self.__pcontroller.shoot_the_ball(me = self.__pcontroller.ball_owner, goalkeeper = adversary_goalkeeper):
+                       
                         # update winner team score
-                        winner = self.__player_controller.get_player_team(
-                            player = self.__player_controller.ball_owner, 
+                        winner = self.__pcontroller.get_player_team(
+                            player = self.__pcontroller.ball_owner, 
                             t1 = self.game.team_a, 
                             t2 = self.game.team_b
                         )
@@ -92,21 +126,23 @@ class GameController(IGameController):
                             self.game.team_b.score += 1
 
                         # reset game after gol
-                        self.__player_controller.reset_game_after_gol(winner = winner, t1 = self.game.team_a, t2 = self.game.team_b)
+                        self.__pcontroller.reset_game_after_gol(winner = winner, t1 = self.game.team_a, t2 = self.game.team_b)
                         time.sleep(self.__time_between_each_play)
-                        self.__player_controller.who_starts_the_game()
+                        self.__pcontroller.who_starts_the_game()
                     else:
-                        self.__player_controller.ball_owner = adversary_goalkeeper
-                        self.__player_controller.team_with_ball = self.__player_controller.get_player_team(
-                            player = self.__player_controller.ball_owner, 
+                        # goalkeeper defends.
+                        self.__pcontroller.ball_owner = adversary_goalkeeper
+                        self.__pcontroller.team_with_ball = self.__pcontroller.get_player_team(
+                            player = self.__pcontroller.ball_owner, 
                             t1 = self.game.team_a, 
                             t2 = self.game.team_b
                         )
                     time.sleep(self.__time_between_each_play)
                 else:
-                    self.__player_controller.ball_owner = adversary_defensor
-                    self.__player_controller.team_with_ball = self.__player_controller.get_player_team(
-                        player = self.__player_controller.ball_owner, 
+                    # defensor intercept dribble
+                    self.__pcontroller.ball_owner = adversary_defensor
+                    self.__pcontroller.team_with_ball = self.__pcontroller.get_player_team(
+                        player = self.__pcontroller.ball_owner, 
                         t1 = self.game.team_a, 
                         t2 = self.game.team_b
                     )

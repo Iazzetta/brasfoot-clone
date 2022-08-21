@@ -1,8 +1,8 @@
 # Wave Soccer
 
-Brasfoot clone
+Cloning brasfoot in Python with Hexagonal Architecture
 
-### Translate
+### Game Legend
 
 - Manager = tecnico (nós)
 - Defensor = zagueiro
@@ -33,15 +33,12 @@ Brasfoot clone
     - defense_goal_points (Goalkeeper)
     - intercept_pass (Defensor, Midfield, Attacker)
 
+### run
+```
+sh run.sh
+```
 
-### Board
-
-- TODO
-    - Soccer Crowd
-    - Sound effects
-
-- DOING
-    - Defining business domain
-    - Defining business usecases
-
-- DONE
+### tests
+```
+sh tests.sh
+```
